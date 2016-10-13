@@ -16,7 +16,6 @@ Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/bl
                 height: 300px;
                 cursor: crosshair;
             }
-
         </style>
 
         <canvas id="canvas" class="color-wheel" on-tap="_updateColor"></canvas>
@@ -52,7 +51,6 @@ Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/bl
                 }
             },
 
-
             attached: function () {
                 var img = new Image();
                 img.src = 'color-wheel.png';
@@ -61,7 +59,6 @@ Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/bl
             },
 
             _updateColor: function (evt) {
-                console.log('_updateColor', evt)
                 let canvas = this.$.canvas
                 let context = canvas.getContext('2d')
                 // Refresh canvas in case user zooms and devicePixelRatio changes.
