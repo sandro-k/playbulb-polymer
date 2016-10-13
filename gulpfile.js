@@ -5,7 +5,6 @@ gulp.task('generate-service-worker', (callback) => {
   let path = require('path')
   let swPrecache = require('sw-precache')
   let rootDir = 'app'
-
   swPrecache.write(path.join(rootDir, 'service-worker.js'), {
     staticFileGlobs: [
       rootDir + '/*.{html, png}',
