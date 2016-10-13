@@ -20,29 +20,37 @@
             :host {
                 box-sizing: border-box;
                 display: block;
-                @apply(--layout);
-                @apply(--layout-vertical;
-                @apply(--layout-fit);
-                @apply(--layout-center-center);
-                background: var(--paper-light-blue-800);
             }
 
             .page {
                 @apply(--layout);
                 @apply(--layout-vertical);
                 @apply(--shadow-elevation-6dp);
+                min-width: 300px;
                 background: #FFFFFF;
-                padding: 1em;
+                padding: 1em 0;
                 border-radius: 2px;
             }
 
             h1 {
                 @apply(--paper-font-display1);
+                @apply(--layout-self-center);
                 color: var(--paper-light-blue-800);
-                margin: 0 0 1em 0;
-                padding: 0.5em 1em;
-                border-radius: 2px;
+                margin: 0;
+                padding: 0 0.5em;
+            }
 
+            h2 {
+                @apply(--paper-font-display1);
+                color: var(--paper-light-blue-800);
+                @apply(--layout-self-center);
+                margin: 0;
+                padding: 0 0.5em;
+                border-radius: 2px;
+            }
+
+            color-wheel {
+                @apply(--layout-self-center);
             }
 
             paper-button {
@@ -86,7 +94,9 @@
 
         <iron-pages selected="[[selectedPage]]">
             <div class="page">
-                <h1 >PLAYBULB CANDLE DEMO</h1>
+                <h1>PLAYBULB</h1>
+                <h1>CANDLE</h1>
+                <h2>DEMO</h2>
                 <paper-button on-tap="connect">CONNECT</paper-button>
             </div>
 
