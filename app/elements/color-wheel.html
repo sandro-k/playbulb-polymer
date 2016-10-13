@@ -12,8 +12,6 @@ Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/bl
             }
 
             .color-wheel {
-                width: 300px;
-                height: 300px;
                 cursor: crosshair;
             }
         </style>
@@ -48,6 +46,11 @@ Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/bl
                     type: String,
                     notify: true,
                     readOnly: true
+                },
+
+                size: {
+                    type: Number,
+                    value: 200
                 }
             },
 
@@ -62,8 +65,8 @@ Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/bl
                 let canvas = this.$.canvas
                 let context = canvas.getContext('2d')
                 // Refresh canvas in case user zooms and devicePixelRatio changes.
-                canvas.width = 300 * devicePixelRatio
-                canvas.height = 300 * devicePixelRatio
+                canvas.width = this.size * devicePixelRatio
+                canvas.height = this.size * devicePixelRatio
                 context.drawImage(this.img, 0, 0, canvas.width, canvas.height)
 
                 let rect = canvas.getBoundingClientRect()
@@ -89,10 +92,10 @@ Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/bl
                 let canvas = this.$.canvas
                 let context = canvas.getContext('2d')
 
-                canvas.width = 300 * devicePixelRatio
-                canvas.height = 300 * devicePixelRatio
-                canvas.style.width = "300px"
-                canvas.style.height = "300px"
+                canvas.width = this.size * devicePixelRatio
+                canvas.height = this.size * devicePixelRatio
+                canvas.style.width = this.size + 'px'
+                canvas.style.height = this.size + 'px'
                 context.drawImage(this.img, 0, 0, canvas.width, canvas.height)
             },
 
