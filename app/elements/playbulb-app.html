@@ -1,0 +1,115 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-styles/color.html">
+<link rel="import" href="../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
+
+<link rel="import" href="playbulb-element.html">
+<link rel="import" href="color-wheel.html">
+
+<dom-module id="playbulb-app">
+    <template>
+        <style>
+            :host {
+                box-sizing: border-box;
+                display: block;
+                @apply(--layout);
+                @apply(--layout-vertical;
+                @apply(--layout-fit);
+                @apply(--layout-center-center);
+                background: var(--paper-light-blue-800);
+            }
+
+            .page {
+                @apply(--layout);
+                @apply(--layout-vertical);
+                @apply(--shadow-elevation-6dp);
+                background: #FFFFFF;
+                padding: 1em;
+                border-radius: 2px;
+            }
+
+            h1 {
+                @apply(--paper-font-display1);
+                color: var(--paper-light-blue-800);
+                margin: 0 0 1em 0;
+                padding: 0.5em 1em;
+                border-radius: 2px;
+
+            }
+
+            paper-button {
+                @apply(--layout-self-center);
+                @apply(--shadow-elevation-6dp);
+                padding: 1em 2em;
+                background: var(--paper-green-500);
+                color: #ffffff;
+                font-weight: bold;
+            }
+
+            .battery {
+                @apply(--layout-self-center);
+                @apply(--paper-font-title);
+                margin-top: 1em;
+            }
+
+            .name {
+                @apply(--layout-self-center);
+                margin: 0;
+            }
+
+            paper-radio-button {
+                @apply(--layout-block);
+            }
+
+            paper-item {
+                --paper-item-selected: {
+                    background: var(--paper-grey-300);
+                    color: var(--paper-light-blue-800);
+                    @apply(--shadow-elevation-2dp);
+                }
+            }
+
+            paper-item paper-radio-button {
+                --paper-radio-button-checked-color: var(--paper-light-blue-800);
+            }
+        </style>
+
+        <playbulb-element id="playbulb" name="{{name}}" device="{{device}}" color="{{color}}" battery="{{battery}}"></playbulb-element>
+
+        <iron-pages selected="[[selectedPage]]">
+            <div class="page">
+                <h1 >PLAYBULB CANDLE DEMO</h1>
+                <paper-button on-tap="connect">CONNECT</paper-button>
+            </div>
+
+            <div class="page">
+                <h1 class="name" contentEditable="true" on-blur="_blurName">[[name]]</h1>
+                <color-wheel id="colorWheel" rgb="{{rgb}}" on-rgb-changed="setColor"></color-wheel>
+
+                <div class="battery">Battery: [[battery]]%</div>
+
+                <paper-listbox selected="{{selectedEffect}}">
+                    <template is="dom-repeat" items="[[effects]]">
+                        <paper-item>
+                            <paper-radio-button checked="[[_isChecked(selectedEffect,index)]]">
+                                [[_formatEffectItem(item)]]
+                            </paper-radio-button>
+                        </paper-item>
+                    </template>
+                </paper-listbox>
+            </div>
+
+        </iron-pages>
+    </template>
+    <script src="playbulb-app.js"></script>
+</dom-module>
+
+

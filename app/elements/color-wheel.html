@@ -1,0 +1,109 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<!--
+Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/blob/gh-pages/app.js
+-->
+<dom-module id="color-wheel">
+    <template>
+        <style>
+            :host {
+                box-sizing: border-box;
+                display: block;
+            }
+
+            .color-wheel {
+                width: 300px;
+                height: 300px;
+                cursor: crosshair;
+            }
+
+        </style>
+
+        <canvas id="canvas" class="color-wheel" on-tap="_updateColor"></canvas>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'color-wheel',
+
+            properties: {
+                red: {
+                    type: Number,
+                    notify: true,
+                    readOnly: true
+                },
+
+                green: {
+                    type: Number,
+                    notify: true,
+                    readOnly: true
+                },
+
+                blue: {
+                    type: Number,
+                    notify: true,
+                    readOnly: true
+                },
+
+                rgb: {
+                    type: String,
+                    notify: true,
+                    readOnly: true
+                }
+            },
+
+
+            attached: function () {
+                var img = new Image();
+                img.src = 'color-wheel.png';
+                img.onload = this._imgLoad.bind(this)
+                this.img = img;
+            },
+
+            _updateColor: function (evt) {
+                console.log('_updateColor', evt)
+                let canvas = this.$.canvas
+                let context = canvas.getContext('2d')
+                // Refresh canvas in case user zooms and devicePixelRatio changes.
+                canvas.width = 300 * devicePixelRatio
+                canvas.height = 300 * devicePixelRatio
+                context.drawImage(this.img, 0, 0, canvas.width, canvas.height)
+
+                let rect = canvas.getBoundingClientRect()
+                let x = Math.round((evt.detail.sourceEvent.clientX - rect.left) * devicePixelRatio)
+                let y = Math.round((evt.detail.sourceEvent.clientY - rect.top) * devicePixelRatio)
+                let data = context.getImageData(0, 0, canvas.width, canvas.height).data
+
+                this._setRed(data[ ((canvas.width * y) + x) * 4 ])
+                this._setGreen(data[ ((canvas.width * y) + x) * 4 + 1 ])
+                this._setBlue(data[ ((canvas.width * y) + x) * 4 + 2 ])
+
+                this._setRgb(("#" + this._intToHex(this.red) + this._intToHex(this.green) + this._intToHex(this.blue)).toUpperCase())
+
+                context.beginPath()
+                context.arc(x, y + 2, 10 * devicePixelRatio, 0, 2 * Math.PI, false)
+                context.shadowColor = '#333'
+                context.shadowBlur = 4 * devicePixelRatio
+                context.fillStyle = 'white'
+                context.fill()
+            },
+
+            _imgLoad: function () {
+                let canvas = this.$.canvas
+                let context = canvas.getContext('2d')
+
+                canvas.width = 300 * devicePixelRatio
+                canvas.height = 300 * devicePixelRatio
+                canvas.style.width = "300px"
+                canvas.style.height = "300px"
+                context.drawImage(this.img, 0, 0, canvas.width, canvas.height)
+            },
+
+            _intToHex: function (i) {
+                let hex = i.toString(16)
+                return hex.length === 1 ? '0' + hex : hex
+            },
+
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,49 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/platinum-bluetooth/platinum-bluetooth-device.html">
+<link rel="import" href="../bower_components/platinum-bluetooth/platinum-bluetooth-service.html">
+<link rel="import" href="../bower_components/platinum-bluetooth/platinum-bluetooth-characteristic.html">
+
+<dom-module id="playbulb-element">
+    <template>
+        <style>
+            :host {
+                box-sizing: border-box;
+                display: block;
+            }
+        </style>
+        <platinum-bluetooth-device
+                services-filter="[[serviceFilter]]"
+                optional-services-filter='["battery_service"]'
+                device="{{_device}}"
+                id="bluetoothDevice">
+
+            <platinum-bluetooth-service service="[[serviceFilter.0]]">
+                <platinum-bluetooth-characteristic id="colorCharacteristic" characteristic="[[candelServiceUUID]]"
+                                                   on-value-changed="_updateColor"
+                                                   value="{{data}}">
+                </platinum-bluetooth-characteristic>
+
+                <platinum-bluetooth-characteristic id="effectCharacteristic" characteristic="[[candelEffectUUID]]"
+                                                   on-value-changed="_updateEffect"
+                                                   value="{{_effect}}">
+                </platinum-bluetooth-characteristic>
+
+                <platinum-bluetooth-characteristic id="nameCharacteristic" characteristic="[[candelNameUUID]]"
+                                                   on-value-changed="_updateName">
+                </platinum-bluetooth-characteristic>
+
+            </platinum-bluetooth-service>
+
+
+            <platinum-bluetooth-service service="battery_service">
+                <platinum-bluetooth-characteristic id="batteryCharacteristic" characteristic="battery_level"
+                                                   value="{{_battery}}"
+                                                   on-value-changed="_updateBattery">
+                </platinum-bluetooth-characteristic>
+            </platinum-bluetooth-service>
+
+        </platinum-bluetooth-device>
+
+    </template>
+    <script src="playbulb-element.js"></script>
+</dom-module>
