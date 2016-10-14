@@ -73,12 +73,12 @@
      *
      */
     connect: function () {
-      this.$.bluetoothDevice.request().then(() => {
-        this.$.colorCharacteristic.read().then(this._updateColor)
-        this.$.effectCharacteristic.read()
-        this.$.nameCharacteristic.read()
-        return this.$.batteryCharacteristic.startNotifications()
-      })
+      this.$.bluetoothDevice.request()
+        .then(_ => this.$.colorCharacteristic.read())
+        .then(_ => this._updateColor())
+        .then(_ => this.$.effectCharacteristic.read())
+        .then(_ => this.$.nameCharacteristic.read())
+        .then(_ => this.$.batteryCharacteristic.startNotifications())
     },
 
     setColor: function (r, g, b, resetEffect) {
