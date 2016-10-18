@@ -54,9 +54,22 @@ Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/bl
                 }
             },
 
+            listeners: {
+                track: '_onTrack',
+            },
+
+            _onTrack: function (event) {
+                switch (event.detail.state) {
+                    case 'track':
+                        this._updateColor(event);
+                        break;
+                }
+            },
+
             attached: function () {
-                var img = new Image();
-                img.src = 'color-wheel.png';
+                var img = new Image()
+                img.src = this.resolveUrl('color-wheel.png')
+
                 img.onload = this._imgLoad.bind(this)
                 this.img = img;
             },
@@ -100,8 +113,11 @@ Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/bl
             },
 
             _intToHex: function (i) {
-                let hex = i.toString(16)
-                return hex.length === 1 ? '0' + hex : hex
+                if (i !== undefined){
+                    let hex = i.toString(16)
+                    return hex.length === 1 ? '0' + hex : hex
+                }
+                return '0xff'
             },
 
         });
