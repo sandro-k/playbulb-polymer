@@ -66,7 +66,19 @@
 
       _effect: {
         type: Object
+      },
+
+      _nextColor: {
+        type: Array,
+        value: function () {
+          return []
+        }
+      },
+
+      _currentColorWrite: {
+        type: Promise
       }
+
     },
 
     /**
@@ -81,9 +93,22 @@
         .then(_ => this.$.batteryCharacteristic.startNotifications())
     },
 
-    setColor: function (r, g, b, resetEffect) {
+    setColor: function (r, g, b) {
+      // set up the data array
       let data = new Uint8Array([ 0x00, r, g, b ])
-      this.$.colorCharacteristic.write(data)
+      // if the is already a write wait until it finishes
+      if (this._currentColorWrite) {
+        // save the next color
+        this.push('_nextColor', data)
+        // attache a fuction to the last write promise
+        this._currentColorWrite.then(_ => {
+          // write out the color in the queue
+          this._currentColorWrite = this.$.colorCharacteristic.write(this.shift('_nextColor'))
+        })
+      } else {
+        // write out the current color
+        this._currentColorWrite = this.$.colorCharacteristic.write(data)
+      }
     },
 
     resetEffect: function (r, g, b) {
