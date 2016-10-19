@@ -82,10 +82,11 @@
     },
 
     /**
-     *
+     * Request to connect to a PLAYBULB LED flameless candle by triggering the WebBluetooth device picker.
+     * PlaybulElement.connect needs to be called from an user interaction like a button click to open up the device chooser
      */
     connect: function () {
-      this.$.bluetoothDevice.request()
+      return this.$.bluetoothDevice.request()
         .then(_ => this.$.colorCharacteristic.read())
         .then(_ => this._updateColor())
         .then(_ => this.$.effectCharacteristic.read())
@@ -93,9 +94,15 @@
         .then(_ => this.$.batteryCharacteristic.startNotifications())
     },
 
-    setColor: function (r, g, b) {
+    /**
+     * Sets the color on the device
+     * @param red {Number} from 0..255
+     * @param green {Number} from 0..255
+     * @param blue {Number} from 0..255
+     */
+    setColor: function (red, green, blue) {
       // set up the data array
-      let data = new Uint8Array([ 0x00, r, g, b ])
+      let data = new Uint8Array([ 0x00, red, green, blue ])
       // if the is already a write wait until it finishes
       if (this._currentColorWrite) {
         // save the next color
@@ -111,11 +118,69 @@
       }
     },
 
-    resetEffect: function (r, g, b) {
-      let effect = new Uint8Array([ 0x00, r, g, b, 0x00, 0x00, 0x00, 0x00 ])
+    /**
+     *
+     * @param red
+     * @param green
+     * @param blue
+     * @returns {Promise.<TResult>}
+     */
+    resetEffect: function (red, green, blue) {
+      let effect = new Uint8Array([ 0x00, red, green, blue, 0x00, 0x00, 0x00, 0x00 ])
       return this.$.effectCharacteristic.write(effect).then(() => {
-        this.setColor(r, g, b)
+        this.setColor(red, green, blue)
       })
+    },
+
+    setCandleEffectColor: function (red, green, blue) {
+      let data = [ 0x00, red, green, blue, 0x04, 0x00, 0x01, 0x00 ]
+
+      // Returns color when fulfilled.
+      return this.$.effectCharacteristic
+        .write(new Uint8Array(data))
+        .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
+        .then(() => [ red, green, blue ])
+    },
+
+    setFlashingColor: function (red, green, blue) {
+      let data = [ 0x00, red, green, blue, 0x00, 0x00, 0x1F, 0x00 ]
+      // Returns color when fulfilled.
+      return this.$.effectCharacteristic
+        .write(new Uint8Array(data))
+        .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
+        .then(() => [ red, green, blue ])
+    },
+
+    setPulseColor: function (red, green, blue) {
+      // We have to correct user color to make it look nice for real...
+      let newRed = Math.min(Math.round(red / 64) * 64, 255)
+      let newGreen = Math.min(Math.round(green / 64) * 64, 255)
+      let newBlue = Math.min(Math.round(blue / 64) * 64, 255)
+      let data = [ 0x00, newRed, newGreen, newBlue, 0x01, 0x00, 0x09, 0x00 ]
+      // Returns color when fulfilled.
+      return this.$.effectCharacteristic
+        .write(new Uint8Array(data))
+        .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
+        .then(() => [ red, green, blue ])
+    },
+
+    setRainbow: function () {
+      let data = [ 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00 ]
+      return this.$.effectCharacteristic
+        .write(new Uint8Array(data))
+        .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
+    },
+
+    setRainbowFade: function () {
+      let data = [ 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x26, 0x00 ]
+      return this.$.effectCharacteristic
+        .write(new Uint8Array(data))
+        .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
+    },
+
+    setName: function (name) {
+      let data = encoder.encode(name)
+      return this.$.nameCharacteristic.write(data)
     },
 
     _updateBattery: function (event, details) {
@@ -140,63 +205,11 @@
           return hex.length === 1 ? '0' + hex : hex
         }
 
-        let r = intToHex(details.value.getUint8(1))
-        let g = intToHex(details.value.getUint8(2))
-        let b = intToHex(details.value.getUint8(3))
-        this._setColor('#' + r + g + b)
+        let red = intToHex(details.value.getUint8(1))
+        let green = intToHex(details.value.getUint8(2))
+        let blue = intToHex(details.value.getUint8(3))
+        this._setColor('#' + red + green + blue)
       }
-    },
-
-    setCandleEffectColor: function (r, g, b) {
-      let data = [ 0x00, r, g, b, 0x04, 0x00, 0x01, 0x00 ]
-
-      // Returns color when fulfilled.
-      return this.$.effectCharacteristic
-        .write(new Uint8Array(data))
-        .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
-        .then(() => [ r, g, b ])
-    },
-
-    setFlashingColor: function (r, g, b) {
-      let data = [ 0x00, r, g, b, 0x00, 0x00, 0x1F, 0x00 ]
-      // Returns color when fulfilled.
-      return this.$.effectCharacteristic
-        .write(new Uint8Array(data))
-        .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
-        .then(() => [ r, g, b ])
-    },
-
-    setPulseColor: function (r, g, b) {
-      // We have to correct user color to make it look nice for real...
-      let newRed = Math.min(Math.round(r / 64) * 64, 255)
-      let newGreen = Math.min(Math.round(g / 64) * 64, 255)
-      let newBlue = Math.min(Math.round(b / 64) * 64, 255)
-      let data = [ 0x00, newRed, newGreen, newBlue, 0x01, 0x00, 0x09, 0x00 ]
-      // Returns color when fulfilled.
-      return this.$.effectCharacteristic
-        .write(new Uint8Array(data))
-        .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
-        .then(() => [ r, g, b ])
-    },
-
-    setRainbow: function () {
-      let data = [ 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00 ]
-      return this.$.effectCharacteristic
-        .write(new Uint8Array(data))
-        .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
-    },
-
-    setRainbowFade: function () {
-      let data = [ 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x26, 0x00 ]
-      return this.$.effectCharacteristic
-        .write(new Uint8Array(data))
-        .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
-    },
-
-    setName: function (name) {
-      let data = encoder.encode(name)
-      return this.$.nameCharacteristic.write(data)
     }
-
   })
 })()
