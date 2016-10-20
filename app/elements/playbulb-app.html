@@ -90,7 +90,7 @@
             }
         </style>
 
-        <playbulb-element id="playbulb" name="{{name}}" device="{{device}}" color="{{color}}" battery="{{battery}}"></playbulb-element>
+        <playbulb-element id="playbulb" name="{{name}}" color-object="{{colorObject}}" device="{{device}}" color="{{color}}" battery="{{battery}}"></playbulb-element>
 
         <iron-pages selected="[[selectedPage]]">
             <div class="page">
@@ -101,6 +101,7 @@
             </div>
 
             <div class="page">
+                <paper-button on-tap="disconnect">DISCONNECT</paper-button>
                 <h1 class="name" contentEditable="true" on-blur="_blurName">[[name]]</h1>
                 <color-wheel id="colorWheel" rgb="{{rgb}}" on-rgb-changed="setColor"></color-wheel>
 
