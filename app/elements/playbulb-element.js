@@ -42,6 +42,12 @@
         notify: true
       },
 
+      colorObject: {
+        type: Object,
+        readOnly: true,
+        notify: true
+      },
+
       serviceFilter: {
         type: Object,
         value: function () {
@@ -92,6 +98,11 @@
         .then(_ => this.$.effectCharacteristic.read())
         .then(_ => this.$.nameCharacteristic.read())
         .then(_ => this.$.batteryCharacteristic.startNotifications())
+    },
+
+    disconnect: function () {
+      console.log('disconnect')
+      this.$.bluetoothDevice.disconnect()
     },
 
     /**
@@ -204,11 +215,18 @@
           let hex = i.toString(16)
           return hex.length === 1 ? '0' + hex : hex
         }
+        var colorObject = {
+          red: details.value.getUint8(1),
+          green: details.value.getUint8(2),
+          blue: details.value.getUint8(3)
+        }
 
-        let red = intToHex(details.value.getUint8(1))
-        let green = intToHex(details.value.getUint8(2))
-        let blue = intToHex(details.value.getUint8(3))
+        let red = intToHex(colorObject.red)
+        let green = intToHex(colorObject.green)
+        let blue = intToHex(colorObject.blue)
+
         this._setColor('#' + red + green + blue)
+        this._setColorObject(colorObject)
       }
     }
   })

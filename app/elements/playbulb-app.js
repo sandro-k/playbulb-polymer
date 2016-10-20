@@ -32,11 +32,22 @@
     },
 
     observers: [
-      '_deviceChanged(device)'
+      '_deviceChanged(device)',
+      '_colorObjectChanged(colorObject)'
     ],
 
     connect: function () {
       this.$.playbulb.connect()
+    },
+
+    disconnect: function () {
+      this.$.playbulb.disconnect()
+    },
+
+    _colorObjectChanged: function (colorObject) {
+      if (colorObject) {
+        this.$.colorWheel.setColor(colorObject)
+      }
     },
 
     _selectedEffectChanged: function (selectedEffect) {
