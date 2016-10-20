@@ -4,10 +4,11 @@
   ],
   "parser": "babel-eslint",
   "globals": {
-    "CustomElements": true,
-    "TextEncoder": true,
-    "TextDecoder": true,
-    "HTMLImports": true,
-    "Polymer": true
+    "CustomElements": false,
+    "devicePixelRatio": false,
+    "TextEncoder": false,
+    "TextDecoder": false,
+    "HTMLImports": false,
+    "Polymer": false
   }
 }
