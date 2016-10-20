@@ -69,51 +69,111 @@ Logic is mostly taken from https://github.com/googlecodelabs/candle-bluetooth/bl
             attached: function () {
                 var img = new Image()
                 img.src = this.resolveUrl('color-wheel.png')
-
                 img.onload = this._imgLoad.bind(this)
                 this.img = img;
+            },
+
+            getPositionForColor: function (color) {
+                var y, x
+                // 255 * 3 + 1
+                var closestDistance = 766
+                var closestPosition
+                var closestColor
+                var currentDistance
+                var currentColor
+                let canvas = this.$.canvas
+                let context = canvas.getContext('2d')
+                let width = canvas.width = this.size * devicePixelRatio
+
+                context.drawImage(this.img, 0, 0, canvas.width, canvas.height)
+                let data = context.getImageData(0, 0, canvas.width, canvas.height).data
+
+                for (y = 0; y < width; y++) {
+                    for (x = 0; x < width; x++) {
+                        // it is not guarantee that we can find a position for the color
+                        currentColor = {
+                            red: data[ ((width * y) + x) * 4 ],
+                            green: data[ ((width * y) + x) * 4 + 1 ],
+                            blue: data[ ((width * y) + x) * 4 + 2 ]
+                        }
+
+                        currentDistance = this._colorDistance(color, currentColor)
+
+                        if ( currentDistance === 0) {
+                            // returning the position to the color
+                            return {x: x, y:y, color: color}
+                        } else if (currentDistance < closestDistance){
+                            // saving the position that is the closest to the color
+                            closestColor = currentColor
+                            closestDistance = currentDistance
+                            closestPosition = {x: x, y:y}
+                        }
+                    }
+                }
+                // returning the closest position to the color
+                return {x: closestPosition.x, y:closestPosition.y, color: closestColor}
+            },
+
+            _colorDistance: function (color1, color2) {
+                return Math.abs(color1.red - color2.red)
+                        + Math.abs(color1.green - color2.green)
+                        + Math.abs(color1.blue - color2.blue)
+            },
+
+            _drawInticatoratPosition: function (position, context) {
+                context.beginPath()
+                context.arc(position.x, position.y + 2, 10 * window.devicePixelRatio, 0, 2 * Math.PI, false)
+                context.shadowColor = '#333'
+                context.shadowBlur = 4 * window.devicePixelRatio
+                context.fillStyle = 'white'
+                context.fill()
+            },
+
+            setColor: function (color) {
+                let canvas = this.$.canvas
+                let context = canvas.getContext('2d')
+                let colorPosition =  this.getPositionForColor(color)
+                this._drawInticatoratPosition(colorPosition, context)
             },
 
             _updateColor: function (evt) {
                 let canvas = this.$.canvas
                 let context = canvas.getContext('2d')
                 // Refresh canvas in case user zooms and devicePixelRatio changes.
-                canvas.width = this.size * devicePixelRatio
-                canvas.height = this.size * devicePixelRatio
+                canvas.width = this.size * window.devicePixelRatio
+                canvas.height = this.size * window.devicePixelRatio
                 context.drawImage(this.img, 0, 0, canvas.width, canvas.height)
 
                 let rect = canvas.getBoundingClientRect()
-                let x = Math.round((evt.detail.sourceEvent.clientX - rect.left) * devicePixelRatio)
-                let y = Math.round((evt.detail.sourceEvent.clientY - rect.top) * devicePixelRatio)
+                let position = {
+                    x: Math.round((evt.detail.sourceEvent.clientX - rect.left) * window.devicePixelRatio),
+                    y: Math.round((evt.detail.sourceEvent.clientY - rect.top) * window.devicePixelRatio)
+                }
+
                 let data = context.getImageData(0, 0, canvas.width, canvas.height).data
 
-                this._setRed(data[ ((canvas.width * y) + x) * 4 ])
-                this._setGreen(data[ ((canvas.width * y) + x) * 4 + 1 ])
-                this._setBlue(data[ ((canvas.width * y) + x) * 4 + 2 ])
+                this._setRed(data[ ((canvas.width * position.y) + position.x) * 4 ])
+                this._setGreen(data[ ((canvas.width * position.y) + position.x) * 4 + 1 ])
+                this._setBlue(data[ ((canvas.width * position.y) + position.x) * 4 + 2 ])
 
                 this._setRgb(("#" + this._intToHex(this.red) + this._intToHex(this.green) + this._intToHex(this.blue)).toUpperCase())
 
-                context.beginPath()
-                context.arc(x, y + 2, 10 * devicePixelRatio, 0, 2 * Math.PI, false)
-                context.shadowColor = '#333'
-                context.shadowBlur = 4 * devicePixelRatio
-                context.fillStyle = 'white'
-                context.fill()
+                this._drawInticatoratPosition(position, context)
             },
 
             _imgLoad: function () {
                 let canvas = this.$.canvas
                 let context = canvas.getContext('2d')
 
-                canvas.width = this.size * devicePixelRatio
-                canvas.height = this.size * devicePixelRatio
+                canvas.width = this.size * window.devicePixelRatio
+                canvas.height = this.size * window.devicePixelRatio
                 canvas.style.width = this.size + 'px'
                 canvas.style.height = this.size + 'px'
                 context.drawImage(this.img, 0, 0, canvas.width, canvas.height)
             },
 
             _intToHex: function (i) {
-                if (i !== undefined){
+                if (i !== undefined) {
                     let hex = i.toString(16)
                     return hex.length === 1 ? '0' + hex : hex
                 }
