@@ -8,7 +8,33 @@ in conjunction with the [Playbulb Candle](http://www.playbulb.com/en/playbulb-ca
 
 In addition it is used to test out the WebBluetooth API on different platforms. The following bugs could be found:
   * [Chrome Bug #655931](https://bugs.chromium.org/p/chromium/issues/detail?id=655931)
-  
+ 
+
+# Playbulb Candle API
+
+## Services & Characteristics
+
+* Device Information 0x180A
+    * Serial Number String 0x2A25 READ
+    * Firmware Revision String 0x2A26 READ
+    * Hardware Revision String 0x2A27 READ
+    * Software Revision String 0x2A28 READ
+    * Manufacturer Name String 0x2A29 READ
+    * PnP ID 0x2A50 READ
+* Battery Service 0x180F
+    * Battery Level 0x2A19 READ NOTIFY
+* Unknown Service 0xFF02 
+    * Heart Rate Measurement 0x2A37 NOTIFY
+    * Unknown Characteristic 0xFFF8 READ
+    * Unknown Characteristic 0xFFF9 READ WRITE
+    * Unknown Characteristic 0xFFFA READ WRITE_WITHOUT_RESPONSE
+    * Unknown Characteristic 0xFFFB READ WRITE_WITHOUT_RESPONSE
+    * Unknown Characteristic 0xFFFC READ WRITE_WITHOUT_RESPONSE
+    * Unknown Characteristic 0xFFFD READ WRITE
+    * Unknown Characteristic 0xFFFE READ WRITE
+    * Unknown Characteristic 0xFFFF READ WRITE
+    
+
    
 # Usage
 
@@ -26,4 +52,26 @@ This project has its structure because it worked in the past, but everything is 
 so pleas feel free to change however needed.    
   
   
-# [LICENSE](LICENSE)  
+# [LICENSE](LICENSE)
+  
+The MIT License (MIT)
+
+Copyright (c) 2016 Sandro Kock
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.  

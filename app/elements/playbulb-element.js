@@ -55,6 +55,33 @@
         }
       },
 
+      UUIDs: {
+        type: Object,
+        value: function () {
+          return {
+            'device_information': 0x180A,
+            'serial_number': 0x2A25,
+            'firmware_revision': 0x2A26,
+            'hardware_revision': 0x2A27,
+            'software_revision': 0x2A28,
+            'manufacturer_name': 0x2A29,
+            'pnp_id': 0x2A50,
+            'battery_service': 0x180F,
+            'battery_level': 0xFF02,
+            'application_service': 0xFF02,
+            'heart_rate_measurement': 0x2A37,
+            '0xFFF8': 0xFFF8,
+            '0xFFF9': 0xFFF9,
+            '0xFFFA': 0xFFFA,
+            '0xFFFB': 0xFFFB,
+            '0xFFFC': 0xFFFC,
+            '0xFFFD': 0xFFFD,
+            '0xFFFE': 0xFFFE,
+            '0xFFFF': 0xFFFF,
+          }
+        }
+      },
+
       candelServiceUUID: {
         type: Number,
         value: 0xFFFC

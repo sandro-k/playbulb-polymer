@@ -17,18 +17,44 @@
                 device="{{_device}}"
                 id="bluetoothDevice">
 
-            <platinum-bluetooth-service service="[[serviceFilter.0]]">
-                <platinum-bluetooth-characteristic id="colorCharacteristic" characteristic="[[candelServiceUUID]]"
+            <platinum-bluetooth-service service="[[UUIDs.device_information]]">
+
+                <platinum-bluetooth-characteristic id="serialNumber"
+                                                   characteristic="[[UUIDs.serial_number]]">
+                </platinum-bluetooth-characteristic>
+
+                <platinum-bluetooth-characteristic id="firmwareRevision"
+                                                   characteristic="[[UUIDs.firmware_revision]]">
+                </platinum-bluetooth-characteristic>
+
+                <platinum-bluetooth-characteristic id="hardwareRevision"
+                                                   characteristic="[[UUIDs.hardware_revision]]">
+                </platinum-bluetooth-characteristic>
+
+                <platinum-bluetooth-characteristic id="hardwareRevision"
+                                                   characteristic="[[UUIDs.hardware_revision]]">
+                </platinum-bluetooth-characteristic>
+
+
+            </platinum-bluetooth-service>
+
+
+            <platinum-bluetooth-service service="[[UUIDs.application_service]]">
+
+                <platinum-bluetooth-characteristic id="colorCharacteristic"
+                                                   characteristic="[[candelServiceUUID]]"
                                                    on-value-changed="_updateColor"
                                                    value="{{data}}">
                 </platinum-bluetooth-characteristic>
 
-                <platinum-bluetooth-characteristic id="effectCharacteristic" characteristic="[[candelEffectUUID]]"
+                <platinum-bluetooth-characteristic id="effectCharacteristic"
+                                                   characteristic="[[candelEffectUUID]]"
                                                    on-value-changed="_updateEffect"
                                                    value="{{_effect}}">
                 </platinum-bluetooth-characteristic>
 
-                <platinum-bluetooth-characteristic id="nameCharacteristic" characteristic="[[candelNameUUID]]"
+                <platinum-bluetooth-characteristic id="nameCharacteristic"
+                                                   characteristic="[[candelNameUUID]]"
                                                    on-value-changed="_updateName">
                 </platinum-bluetooth-characteristic>
 
