@@ -120,16 +120,63 @@
      */
     connect: function () {
       return this.$.bluetoothDevice.request()
-        .then(_ => this.$.colorCharacteristic.read())
+        .then(_ => this.getColor())
         .then(_ => this._updateColor())
-        .then(_ => this.$.effectCharacteristic.read())
-        .then(_ => this.$.nameCharacteristic.read())
-        .then(_ => this.$.batteryCharacteristic.startNotifications())
+        .then(_ => this.getEffect())
+        .then(_ => this.getName())
+        .then(_ => this.startNoificationsOnBattery())
+    },
+
+    /**
+     * Starts BLE notifications on the battery level
+     * @returns {Promise<void>}
+     */
+    startNoificationsOnBattery: function () {
+      return this.$.batteryCharacteristic.startNotifications()
+    },
+
+    /**
+     * Stops BLE notifications for the battery level
+     * @returns {Promise<void>}
+     */
+    stopNoificationsOnBattery: function () {
+      return this.$.batteryCharacteristic.stopNotifications()
     },
 
     disconnect: function () {
-      console.log('disconnect')
       this.$.bluetoothDevice.disconnect()
+    },
+
+    getCharacter: function (id) {
+      return this.$[ id ].read()
+    },
+
+    getColor: function () {
+      return this.getCharacter('colorCharacteristic')
+    },
+
+    getEffect: function () {
+      return this.getCharacter('effectCharacteristic')
+    },
+
+    getName: function () {
+      return this.getCharacter('nameCharacteristic')
+    },
+
+    getFirmwareRevision: function () {
+      return this.getCharacter('firmwareRevision')
+    },
+
+    getHardwareRevision: function () {
+      return this.getCharacter('hardwareRevision')
+    },
+
+    getSoftwareRevision: function () {
+      return this.getCharacter('softwareRevision')
+    },
+
+    getManufacturerName: function () {
+      return this.getCharacter('manufacturerName')
     },
 
     /**
@@ -145,7 +192,7 @@
       if (this._currentColorWrite) {
         // save the next color
         this.push('_nextColor', data)
-        // attache a fuction to the last write promise
+        // attache a function to the last write promise
         this._currentColorWrite.then(_ => {
           // write out the color in the queue
           this._currentColorWrite = this.$.colorCharacteristic.write(this.shift('_nextColor'))
@@ -156,6 +203,10 @@
       }
     },
 
+    writeEffect: function (data) {
+      return this.$.effectCharacteristic.write(new Uint8Array(data))
+    },
+
     /**
      *
      * @param red
@@ -164,8 +215,9 @@
      * @returns {Promise.<TResult>}
      */
     resetEffect: function (red, green, blue) {
-      let effect = new Uint8Array([ 0x00, red, green, blue, 0x00, 0x00, 0x00, 0x00 ])
-      return this.$.effectCharacteristic.write(effect).then(() => {
+      let data = [ 0x00, red, green, blue, 0x00, 0x00, 0x00, 0x00 ]
+
+      return this.writeEffect(data).then(() => {
         this.setColor(red, green, blue)
       })
     },
@@ -174,17 +226,16 @@
       let data = [ 0x00, red, green, blue, 0x04, 0x00, 0x01, 0x00 ]
 
       // Returns color when fulfilled.
-      return this.$.effectCharacteristic
-        .write(new Uint8Array(data))
+      return this.writeEffect(data)
         .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
         .then(() => [ red, green, blue ])
     },
 
     setFlashingColor: function (red, green, blue) {
       let data = [ 0x00, red, green, blue, 0x00, 0x00, 0x1F, 0x00 ]
+
       // Returns color when fulfilled.
-      return this.$.effectCharacteristic
-        .write(new Uint8Array(data))
+      return this.writeEffect(data)
         .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
         .then(() => [ red, green, blue ])
     },
@@ -196,23 +247,21 @@
       let newBlue = Math.min(Math.round(blue / 64) * 64, 255)
       let data = [ 0x00, newRed, newGreen, newBlue, 0x01, 0x00, 0x09, 0x00 ]
       // Returns color when fulfilled.
-      return this.$.effectCharacteristic
-        .write(new Uint8Array(data))
+      return this.writeEffect(data)
         .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
         .then(() => [ red, green, blue ])
     },
 
     setRainbow: function () {
       let data = [ 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00 ]
-      return this.$.effectCharacteristic
-        .write(new Uint8Array(data))
+      return this.writeEffect(data)
         .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
     },
 
-    setRainbowFade: function () {
-      let data = [ 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x26, 0x00 ]
-      return this.$.effectCharacteristic
-        .write(new Uint8Array(data))
+    setRainbowFade: function (fadeSpeed) {
+      fadeSpeed = fadeSpeed || 0x01
+      let data = [ 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, fadeSpeed, 0x00 ]
+      return this.writeEffect(data)
         .then(this.$.effectCharacteristic.read.bind(this.$.effectCharacteristic))
     },
 
