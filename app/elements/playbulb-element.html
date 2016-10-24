@@ -13,7 +13,7 @@
         </style>
         <platinum-bluetooth-device
                 services-filter="[[serviceFilter]]"
-                optional-services-filter='["battery_service"]'
+                optional-services-filter='["battery_service", "device_information"]'
                 device="{{_device}}"
                 id="bluetoothDevice">
 
@@ -31,10 +31,17 @@
                                                    characteristic="[[UUIDs.hardware_revision]]">
                 </platinum-bluetooth-characteristic>
 
-                <platinum-bluetooth-characteristic id="hardwareRevision"
-                                                   characteristic="[[UUIDs.hardware_revision]]">
+                <platinum-bluetooth-characteristic id="softwareRevision"
+                                                   characteristic="[[UUIDs.software_revision]]">
                 </platinum-bluetooth-characteristic>
 
+                <platinum-bluetooth-characteristic id="manufacturerName"
+                                                   characteristic="[[UUIDs.manufacturer_name]]">
+                </platinum-bluetooth-characteristic>
+
+                <platinum-bluetooth-characteristic id="pnpID"
+                                                   characteristic="[[UUIDs.pnp_id]]">
+                </platinum-bluetooth-characteristic>
 
             </platinum-bluetooth-service>
 
