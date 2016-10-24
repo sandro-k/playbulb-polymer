@@ -14,8 +14,8 @@ In addition it is used to test out the WebBluetooth API on different platforms. 
 
 ## Services & Characteristics
 
-* Device Information 0x180A
-    * Serial Number String 0x2A25 READ
+* Device Information 0x180A 
+    * Serial Number String 0x2A25 READ - Blacklisted for WebBluetooth
     * Firmware Revision String 0x2A26 READ
     * Hardware Revision String 0x2A27 READ
     * Software Revision String 0x2A28 READ
@@ -34,8 +34,6 @@ In addition it is used to test out the WebBluetooth API on different platforms. 
     * Unknown Characteristic 0xFFFE READ WRITE
     * Unknown Characteristic 0xFFFF READ WRITE
     
-
-   
 # Usage
 
 ```
